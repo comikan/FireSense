@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package firesense;
+
+service FireSense {
+  rpc UploadFile(stream FileChunk) returns (UploadResponse);
+  rpc DownloadFile(DownloadRequest) returns (stream FileChunk);
+  rpc ListFiles(ListRequest) returns (ListResponse);
+  rpc GetMetadata(MetadataRequest) returns (MetadataResponse);
+}
+
+message FileChunk {
+  string file_id = 1;
+  bytes content = 2;
+  int64 offset = 3;
+  bool is_last = 4;
+  string checksum = 5;
+}
+
+message UploadResponse {
+  string file_id = 1;
+  int64 size = 2;
+  string checksum = 3;
+}
+
+message DownloadRequest {
+  string file_id = 1;
+  int64 offset = 2;
+}
+
+message ListRequest {
+  string prefix = 1;
+}
+
+message ListResponse {
+  repeated FileInfo files = 1;
+}
+
+message FileInfo {
+  string file_id = 1;
+  string name = 2;
+  int64 size = 3;
+  string mime_type = 4;
+}
+
+message MetadataRequest {
+  string file_id = 1;
+}
+
+message MetadataResponse {
+  map<string, string> metadata = 1;
+}
